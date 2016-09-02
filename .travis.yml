@@ -1,0 +1,61 @@
+env:
+  global:
+    - CXX=g++-4.8
+    - ds_host=52.59.253.77
+    - ds_user=root
+    - ds_password=deepstreamhubpassword
+
+# Do not insert any code under here without making sures it's in publishingtest first
+language: node_js
+
+plugins:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+
+node_js:
+  - "stable"
+  - "4.4.5"
+
+matrix:
+  include:
+    - node_js: "4.4.5"
+      os: osx
+
+script:
+  - npm run test
+  - curl -o package.sh -L https://raw.githubusercontent.com/deepstreamIO/deepstream.io-connector-publishingtest/master/scripts/package.sh
+  - chmod 555 package.sh
+  - ./package.sh
+
+deploy:
+  - provider: s3
+    access_key_id:
+      secure: "atrDn+jVaKDAtLmKSigu4zCzADxxinpA0EnvCXCTO3TRqudCXmqk7v0klVETNUjsAVQN6Vt8vpj9yhqfmL/9mGZX+bMFTPCLCl26oPN+2xkQ3gZnXDBdURbxQUweP33fKiohgXrGrgCvLxZtV/Ch8qTBOlsSuxJyoS0GXuZyCssyaGiK5NSIMtn6BxWurvLoZiVybywa2HD7Pm/e0BbOLfVbbse30MOTiNO5dwtjiGrDTyjtUmTnDxL3wCpIhDulFONRpFn9fHUwaioUIQ/7ngMsONTr4uZ7cQB6Oh6NmJhSUDaomopCnxrkoGi+FZ/6Rb5O5inR5YEUXF8EcSRQxzjOPCpau8KkXsPlRn86OBMGLPFKY4IrQ0/9+v0zHKaiJEgC/+yITdKNYmYmuJvKxtbd+2yDxLGVIUojMux1/Ue/CzgbKcWLDZ4dvvkirdC0C1BeSSZhdRJVFKeb25/+HXGIVCGDXgV+zWJVYftEPcOiA54Q2J8EY+PrSikuam7xCr7oTJ0wsW56NKnN9E8KHFQiviAu00VK8cS6mTA7gnmJEtyRw8IjVlEQbEPJyoQNdV77yk3SJnqRNLYZwNT0GCeqbzx4HX7nq43t79Bv/peJgs/TCCTRsrAsAnK0IKIAc5M/cSHGkPy7KXkGQuE9MeOwQNKrhP71DtyKnjrOHrQ="
+    secret_access_key:
+      secure: "jRv/LIWS2VMdJeKJQ0GjpQQT4gYDzd6uhtZZUGebWIxnXvzcVexPj29tF/xEDzrwqPvl6b2/hJBKu6l445bA8ADMVFT25mfAGX3Sx3sIA1hboTuPeUKaf9BOGQK98ukf8bmmaFjsFRV+U3uhDp3Ez5u1vh9IW1T1uiJc1pepi9Ehs10aJ8Fy59XIbHT3ddxrmceucVH4V4lSnjufuClr3Gr0dL5xiBhI1VDlDf3qY6u+6qjaFMFBG7fEabeXZ4GQt+byuHMMlDVCVyuocQHC0lbZkSMhXsNE0bjrsYnDUutZIPvMoWixAawT6lHkDzVcosg4aQpodxFFNDlkuWZv/gviBuQ4pjKhj5NJ8Utt1iSdVm+51MnyA2Irf2t0SGSnxXWGMDbrzW/lRYlm8I/NRt/2b33xxMsF0jzpfq+4+Wv2Xj4QDw5RXov+FdJlrFrZSQcZq7NBp40KwbZqBjkQbluMR302bWaPRb7yGG/Lo03Ee2cf8aGuevpqQsO7p1OOLjLdX6+b3nrqNNG2o/UBIIAThT+mpq9D8OBoatI2iJHGde5iFWXw+KbQVLmuX+TpIlBLbZ7EixUgZAvYK6Cns7984mFBYzlAZKJCjVuDrL61UZeNm8AocwMYSkbz00+/VqdCIU8O4ojdSTy9yDdAlsTXvACMusLmGQga5kaqiB4="
+    bucket: ds-server-artifacts
+    skip_cleanup: true
+    acl: public_read
+    local_dir: build
+    upload-dir: $TRAVIS_REPO_SLUG
+  - provider: releases
+    skip_cleanup: true
+    api_key:
+      secure: "eSJNqDT6Dd8Bd8W8EBTrru883iEzPOc9P6sGncB885j3fmHLKbuLJZaPOyOhqIV/Kdc5/9rpGZ7Kz/YCitof2p3feqb84MRmCCFo7yPO0DWIGvRimbEvlFnezlc5WxJ3jbBnZrBdsGBPJG/9WmDk9mJofi3Uhpas1lsBpoIrnok6ZVt69+YtWEvUbhHHeEy2eELFeu1auC7JZp+EhnIhW31FHbfmnShN3yrXajp5DOHfJ6+R4HQaAAwBEuv9zgFs33jmekQOrZO0iXadUKDas4qNmkl2yYtA+1UlybxeacZfeSlJA14yABABTtCtqPwr5A4kafzoUAFlkGQCOnfNjpkrxvVxqb4TTbJyNS/TSl8ZY0Is9uo95cqXOpki64hhjAjGZ9/sU/m3dzYuSv3a55Ln1sBgjNgCBMT/udDLq1FCu4uOQYBzlOMrHt9SaWcgxGpfU//FNBniNhZy6mRvi0j9ChL5FmlHlOOL9S3hgMLinOribsxZQMg5YgCpuKDHJ8MxFL7ZdXcRd2wQl9QzbejTpjdRtvv/XePGE0bgvwbzmAyjgmoMydDPFQHDu88h51pwA3l+QS77s6o2ZpZCmB+JEw2RzLM9Po4GbSsRsWw3Uv7i7OkzKQOgiKEMsPZN978acs9pViNg2whMjCC23f15/qFPcAXf1V5tOytyT3Y="
+    file_glob: true
+    file:
+      - "build/*.tar.gz"
+      - "build/*.zip"
+    on:
+      tags: true
+
+after_deploy:
+  - curl -o test.sh -L https://raw.githubusercontent.com/deepstreamIO/deepstream.io-connector-publishingtest/master/scripts/test.sh
+  - chmod 555 test.sh
+  - ./test.sh
+
+after_script:
+  - "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

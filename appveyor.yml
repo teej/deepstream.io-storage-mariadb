@@ -2,6 +2,11 @@
 os:
   - Visual Studio 2015
 
+environment:
+  ds_host: 52.59.253.77
+  ds_user: root
+  ds_password: deepstreamhubpassword
+
 platform:
   - x64
 
