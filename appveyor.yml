@@ -11,7 +11,7 @@ platform:
   - x64
 
 install:
-  - ps: Install-Product node 4.4.5
+  - ps: Install-Product node 4.4.7
   - npm install
 
 test_script:
