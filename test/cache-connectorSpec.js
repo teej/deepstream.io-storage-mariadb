@@ -4,7 +4,6 @@
 const expect = require('chai').expect
 const CacheConnector = require('../src/connector')
 const EventEmitter = require('events').EventEmitter
-const settings = { port: 6379, host: 'localhost' }
 const MESSAGE_TIME = 20
 
 describe( 'the message connector has the correct structure', () => {
@@ -15,7 +14,7 @@ describe( 'the message connector has the correct structure', () => {
   })
 
   it( 'creates the cacheConnector', ( done ) => {
-    cacheConnector = new CacheConnector( settings )
+    cacheConnector = new CacheConnector( {} )
     expect( cacheConnector.isReady ).to.equal( false )
     cacheConnector.on( 'ready', done )
   })

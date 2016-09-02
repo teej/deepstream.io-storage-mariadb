@@ -67,7 +67,7 @@ class Connector extends events.EventEmitter {
 					return go();
 				});
 			});
-		});	
+		});
 	}
 
 	set (key, value, callback) {
@@ -78,7 +78,7 @@ class Connector extends events.EventEmitter {
 			return callback(e);
 		};
 		let tableName = (splitted.length > 1) ? splitted[0] : this._table.name;
-		if (this._tableList.includes(tableName)) {
+		if (this._tableList.indexOf(tableName) > -1) {
 			this._upsert(tableName, key, value).then(() => {
 				return callback(null);
 			}).catch((e) => {
@@ -100,7 +100,7 @@ class Connector extends events.EventEmitter {
 				}
 			);
 		};
-		
+
 	}
 
 	get (key, callback) {
