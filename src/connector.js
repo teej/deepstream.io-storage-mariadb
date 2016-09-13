@@ -58,7 +58,7 @@ class Connector extends events.EventEmitter {
 		return new Promise((go, stop) => {
 			this._db.query('select * from ' + tableName + ' where ds_key = ?', [ key ], (e, rows) => {
 				if (e) return stop(e);
-				if (rows[0]) this._db.query('update ' + tableName + ' set ds_value = ? where ds_key = ?', [ value, key ], (e2, rows2) => {
+				if (rows[0]) this._db.query('update ' + tableName + ' set ds_value = ? where ds_key = ?', [ JSON.stringify(value), key ], (e2, rows2) => {
 					if (e2) return stop(e2);
 					return go();
 				})
